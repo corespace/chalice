@@ -131,6 +131,23 @@ def test_chalice_tag_added_to_function(sample_app,
         'aws-chalice': 'version=%s:stage=dev:app=myapp' % chalice_version}
 
 
+def test_sample_app_with_underscore_in_view_name(sample_app_with_underscore_in_view_name,
+                                                 mock_swagger_generator,
+                                                 mock_policy_generator):
+    p = package.SAMTemplateGenerator(
+        mock_swagger_generator, mock_policy_generator)
+    mock_swagger_generator.generate_swagger.return_value = {
+        'swagger': 'document'
+    }
+    config = Config.create(chalice_app=sample_app_with_underscore_in_view_name,
+                           api_gateway_stage='dev',
+                           app_name='myapp')
+    template = p.generate_sam_template(config)
+    events = template['Resources']['APIHandler']['Properties']['Events']
+    for key in events.keys():
+        assert '_' not in key
+
+
 def test_custom_tags_added_to_function(sample_app,
                                        mock_swagger_generator,
                                        mock_policy_generator):

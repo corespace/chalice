@@ -20,6 +20,17 @@ def sample_app():
 
 
 @fixture
+def sample_app_with_underscore_in_view_name():
+    app = Chalice('sample')
+
+    @app.route('/')
+    def foo_bar_baz():
+        return {}
+
+    return app
+
+
+@fixture
 def sample_app_with_auth():
     app = Chalice('sampleauth')
 
